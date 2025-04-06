@@ -1,0 +1,30 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Enterprise {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  User User[]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  enterpriseId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  empresa   Enterprise  @relation(fields: [enterpriseId], references: [id], onDelete: NoAction)
+}
