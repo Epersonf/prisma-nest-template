@@ -52,7 +52,7 @@ export abstract class BaseRepository<
       const total: number = await this.getModel().count({ where: params?.where });
       return new PaginatedList({
         items,
-        total,
+        pageCount: params?.pagination?.getPageSize() ? Math.ceil(total / params.pagination.getPageSize()) : 1,
       });
     } catch (error) {
       PrismaErrorCatcher.handle(error);

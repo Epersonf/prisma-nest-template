@@ -24,10 +24,16 @@ export class UserEntity implements User {
   @JsonProperty()
   public enterpriseId: string;
 
-  @JsonProperty()
+  @JsonProperty({
+    beforeDeserialize: (value) => value.toISOString(),
+    beforeSerialize: (value) => value.toISOString(),
+  })
   public createdAt: Date;
 
-  @JsonProperty()
+  @JsonProperty({
+    beforeDeserialize: (value) => value.toISOString(),
+    beforeSerialize: (value) => value.toISOString(),
+  })
   public updatedAt: Date;
 
   constructor(params?: {

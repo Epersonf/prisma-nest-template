@@ -1,10 +1,25 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Transform } from "class-transformer";
+import { IsNumber, IsOptional } from "class-validator";
 
 export class PaginationDto {
   @ApiProperty()
+  @IsNumber()
+  @Transform(({ value }) => Number(value))
+  @IsOptional()
   private page?: number;
+  public getPage(): number | undefined {
+    return this.page;
+  }
+  
   @ApiProperty()
+  @IsNumber()
+  @Transform(({ value }) => Number(value))
+  @IsOptional()
   private pageSize?: number;
+  public getPageSize(): number | undefined {
+    return this.pageSize;
+  }
 
   constructor(params?: {
     page: number,

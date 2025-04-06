@@ -1,14 +1,14 @@
 export class PaginatedList<T> {
   
   private items: T[];
-  private totalPages: number;
+  private pageCount: number;
 
   constructor(params: {
     items: T[],
-    total: number,
+    pageCount: number,
   }) {
     this.items = params.items;
-    this.totalPages = params.total;
+    this.pageCount = params.pageCount;
   }
 
   public setItems(items: T[]): void {
@@ -20,11 +20,11 @@ export class PaginatedList<T> {
   }
 
   public setTotalPages(total: number): void {
-    this.totalPages = total;
+    this.pageCount = total;
   }
 
   public getTotalPages(): number {
-    return this.totalPages;
+    return this.pageCount;
   }
 
 }
