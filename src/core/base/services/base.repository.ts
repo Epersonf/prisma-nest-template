@@ -20,7 +20,6 @@ export abstract class BaseRepository<
     type: new () => object,
     prisma: PrismaService,
     modelName: string,
-    empresaId: string | null, // YOU CAN PASS NULL, BUT YOU'LL HAVE TO DO IT EXPLICITLY
   }) {
     this.type = params.type;
     this.prisma = params.prisma;
