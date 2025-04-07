@@ -1,10 +1,14 @@
 import { JsonObject, JsonProperty } from "typescript-json-serializer";
 import { User } from '@prisma/client';
+import { CommonEntity } from "src/core/base/interfaces/common-entity.int";
 
 @JsonObject()
-export class UserEntity implements User {
+export class UserEntity implements User, CommonEntity {
   @JsonProperty()
   public id: string;
+  getId(): string {
+    return this.id;
+  }
 
   @JsonProperty()
   public name: string;
@@ -26,13 +30,13 @@ export class UserEntity implements User {
 
   @JsonProperty({
     beforeDeserialize: (value) => value.toISOString(),
-    beforeSerialize: (value) => value.toISOString(),
+    beforeSerialize: (value) => value?.toISOString(),
   })
   public createdAt: Date;
 
   @JsonProperty({
     beforeDeserialize: (value) => value.toISOString(),
-    beforeSerialize: (value) => value.toISOString(),
+    beforeSerialize: (value) => value?.toISOString(),
   })
   public updatedAt: Date;
 

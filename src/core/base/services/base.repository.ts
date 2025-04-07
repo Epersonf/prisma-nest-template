@@ -4,9 +4,10 @@ import { PaginationDto } from '../dtos/pagination.dto';
 import { Prisma } from '@prisma/client';
 import { DefaultSerializer } from '../../../core/serializer/default-serializer';
 import { PrismaErrorCatcher } from '../../../core/prisma/prisma-error-catcher';
+import { CommonEntity } from '../interfaces/common-entity.int';
 
 export abstract class BaseRepository<
-  T,
+  T extends CommonEntity,
   TWhereInput=Record<string, any>,
   TInclude=Record<string, boolean>,
   TOrderBy=Record<string, 'asc' | 'desc'>
@@ -82,9 +83,18 @@ export abstract class BaseRepository<
     tx?: Prisma.TransactionClient,
   }): Promise<T[]> {
     try {
-      const json = DefaultSerializer.serializeObjectArray(params.data);
-      const result = await this.getModel(params.tx).updateManyAndReturn({
-        data: json,
+      const result = await this.prisma.$transaction(async (tx) => {
+        const list: any[] = [];
+        for (const item of params.data) {
+          if (!item.getId()) continue;
+          const data = DefaultSerializer.serializeObject(item);
+          const updated = await this.getModel(params.tx ?? tx).update({
+            where: { id: item.getId() },
+            data,
+          });
+          list.push(updated);
+        }
+        return list;
       });
       const objects = DefaultSerializer.deserializeObjectArray(result, this.type) as T[];
       return objects;
@@ -97,13 +107,12 @@ export abstract class BaseRepository<
   async delete(params: {
     ids: string[],
     tx?: Prisma.TransactionClient,
-  }): Promise<T[]> {
+  }): Promise<number> {
     try {
-      const result = await this.getModel(params.tx).deleteManyAndReturn({
+      const result = await this.getModel(params.tx).deleteMany({
         where: { id: { in: params.ids } },
       });
-      const objects = DefaultSerializer.deserializeObjectArray(result, this.type) as T[];
-      return objects;
+      return result.count;
     } catch (error) {
       PrismaErrorCatcher.handle(error);
       throw error;
