@@ -41,7 +41,7 @@ export abstract class BaseRepository<
     orderBy?: TOrderBy,
   }): Promise<PaginatedList<T>> {
     try {
-      const result: any[] = await this.prisma.getPrisma().user.findMany({
+      const result: any[] = await this.getModel().findMany({
         where: params?.where,
         include: params?.include,
         skip: params?.pagination?.getSkip(),
